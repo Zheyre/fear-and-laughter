@@ -1,0 +1,185 @@
+---
+title: "The Psychology of a Good Scare"
+subtitle: "32,000 horror movies, three ideas from psychology, and a chance to test them yourself"
+---
+
+::: {.reel}
+The Laboratory
+:::
+
+```{r}
+library(dplyr)
+library(readr)
+library(tidyr)
+
+horror <- read_csv("data/horror_movies.csv", show_col_types = FALSE) |>
+  mutate(year = as.integer(format(release_date, "%Y")))
+
+# 1. Audience ratings for movies with at least 20 votes
+rated <- horror |>
+  filter(vote_count >= 20) |>
+  select(title, year, genre_names, vote_average)
+
+# 2. Which fears show up in plot descriptions, in 5-year periods
+fear_words <- c(
+  Ghosts = "ghost|haunt", Zombies = "zombie|undead",
+  Demons = "demon|possess|exorcis", "Serial killers" = "serial killer|slasher|masked killer",
+  "Viruses and outbreaks" = "virus|infect|outbreak|pandemic|plague",
+  Aliens = "alien|extraterrestrial", Witches = "witch",
+  "Phones and the internet" = "internet|online|social media|webcam|smartphone|cell phone",
+  Vampires = "vampire"
+)
+themed <- horror |>
+  filter(year >= 1960, year <= 2019) |>
+  mutate(period = 5 * (year %/% 5), text = tolower(paste(overview, tagline)))
+fears <- bind_rows(lapply(names(fear_words), function(w) {
+  themed |>
+    group_by(period) |>
+    summarise(share = mean(grepl(fear_words[[w]], text)), films = n()) |>
+    mutate(theme = w)
+}))
+
+# 3. Release month, leaving out movies listed only as "January 1"
+months <- horror |>
+  filter(format(release_date, "%m-%d") != "01-01") |>
+  mutate(month = as.integer(format(release_date, "%m"))) |>
+  count(year, month)
+
+ojs_define(rated = rated, fears = fears, months = months,
+           fear_names = names(fear_words))
+```
+
+Why would anyone choose to feel afraid? Psychologists have been studying that question for decades. This page takes three of their ideas and checks them against what audiences actually watched, rated, and lined up for. The data shows the patterns; the research offers reasons that may explain them.
+
+## 1. When fear meets laughter
+
+```{ojs}
+viewof partner = Inputs.select(
+  ["Comedy", "Drama", "Mystery", "Fantasy", "Thriller", "Action", "Science Fiction", "Romance", "Animation"],
+  {label: "Mix horror with", value: "Comedy"}
+)
+```
+
+```{ojs}
+ratedRows = transpose(rated)
+pureHorror = ratedRows.filter(d => d.genre_names === "Horror")
+blended = ratedRows.filter(d => d.genre_names.includes(partner))
+median = arr => d3.median(arr, d => d.vote_average)
+```
+
+::: {.stat-row}
+::: {.stat .pure}
+[Horror alone]{.label}
+
+[${median(pureHorror).toFixed(1)}]{.num}
+
+[median audience rating, ${pureHorror.length.toLocaleString()} films]{.small}
+:::
+
+::: {.stat .mix}
+[Horror + ${partner}]{.label}
+
+[${median(blended).toFixed(1)}]{.num}
+
+[median audience rating, ${blended.length.toLocaleString()} films]{.small}
+:::
+:::
+
+```{ojs}
+Plot.plot({
+  width: 800, height: 300, marginLeft: 50,
+  style: {background: "transparent", color: "#efe6d2", fontSize: "13px"},
+  x: {label: "Audience rating out of 10 →", domain: [0, 10]},
+  y: {label: "↑ Share of films", tickFormat: "%", grid: true},
+  marks: [
+    Plot.areaY(pureHorror, Plot.binX({y: "proportion"},
+      {x: "vote_average", thresholds: d3.range(0, 10.5, 0.5), fill: "#e11d48", fillOpacity: 0.35, stroke: "#e11d48", curve: "basis"})),
+    Plot.areaY(blended, Plot.binX({y: "proportion"},
+      {x: "vote_average", thresholds: d3.range(0, 10.5, 0.5), fill: "#f5c451", fillOpacity: 0.35, stroke: "#f5c451", curve: "basis"})),
+    Plot.ruleY([0], {stroke: "#5b4f50"})
+  ]
+})
+```
+
+Pure horror ties for the lowest typical rating here. Almost every blend scores higher, and horror comedies beat plain horror by a clear margin. Audiences seem to enjoy fear most when something softens it.
+
+::: {.labnote}
+[Lab Note]{.lab-label}
+
+**Benign violation theory** (McGraw and Warren, 2010, *Psychological Science*) suggests we laugh when something feels threatening or wrong, but also safe. A horror comedy delivers both at once. Research on haunted houses (Andersen and colleagues, 2020, *Psychological Science*) found people enjoyed the experience most at a moderate "sweet spot" of fear, not at the most terrifying moments. Mixing fear with laughter may be one way films keep audiences in that sweet spot.
+:::
+
+## 2. Our fears change with the times
+
+```{ojs}
+viewof pickedFears = Inputs.checkbox(fear_names,
+  {label: "Show these fears", value: ["Zombies", "Vampires", "Viruses and outbreaks", "Phones and the internet"]})
+```
+
+```{ojs}
+Plot.plot({
+  width: 800, height: 380, marginLeft: 50,
+  style: {background: "transparent", color: "#efe6d2", fontSize: "13px"},
+  x: {label: "Five-year period →", tickFormat: d => d + "s"},
+  y: {label: "↑ Share of horror plots mentioning it", tickFormat: "%", grid: true},
+  color: {legend: true, scheme: "warm"},
+  marks: [
+    Plot.lineY(transpose(fears).filter(d => pickedFears.includes(d.theme)),
+      {x: "period", y: "share", stroke: "theme", strokeWidth: 3, curve: "catmull-rom", tip: true,
+       channels: {Films: "films"}}),
+    Plot.dot(transpose(fears).filter(d => pickedFears.includes(d.theme)),
+      {x: "period", y: "share", fill: "theme", r: 3.5})
+  ]
+})
+```
+
+The monsters on screen move with the culture. Vampires and witches were common in the 1960s and have faded since. Zombies rose to a peak in the mid 2000s, and outbreak stories reached their highest levels in the 2000s and 2010s. Stories about phones and the internet barely existed before the 1990s and have grown steadily since.
+
+::: {.labnote}
+[Lab Note]{.lab-label}
+
+**Threat simulation** is one explanation for why people seek out scary stories. Clasen, Kjeldgaard-Christiansen and Johnson (2020, *Evolutionary Behavioral Sciences*) describe horror as a safe way to rehearse responses to danger. If that's true, it makes sense that the dangers on screen follow the ones people worry about in real life. In a related study, Scrivner and colleagues (2021, *Personality and Individual Differences*) found that horror fans reported more psychological resilience during the COVID-19 pandemic.
+:::
+
+## 3. The Halloween effect
+
+```{ojs}
+viewof yearRange = Inputs.range([1950, 2022], {label: "Movies released since", step: 1, value: 1950})
+```
+
+```{ojs}
+monthRows = transpose(months).filter(d => d.year >= yearRange)
+monthTotals = d3.rollups(monthRows, v => d3.sum(v, d => d.n), d => d.month)
+  .map(([month, n]) => ({month, n}))
+allFilms = d3.sum(monthTotals, d => d.n)
+monthShares = monthTotals.map(d => ({...d, share: d.n / allFilms,
+  name: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.month - 1]}))
+octShare = monthShares.find(d => d.month === 10).share
+```
+
+```{ojs}
+html`<p><strong>${(octShare * 100).toFixed(1)}%</strong> of the <strong>${allFilms.toLocaleString()}</strong> horror movies released since ${yearRange} came out in October. If releases were spread evenly, each month would get about 8.3% (the dashed line).</p>`
+```
+
+Try sliding the year forward. In the 1950s and 1960s, October was not horror's biggest month. It took the lead in the 1970s, and its share has kept growing since, from about 10% of releases in the 1970s to about 19% in the 2010s. The Halloween effect is not just real; it is getting stronger.
+
+```{ojs}
+Plot.plot({
+  width: 800, height: 320, marginLeft: 50,
+  style: {background: "transparent", color: "#efe6d2", fontSize: "13px"},
+  x: {label: null, domain: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]},
+  y: {label: "↑ Share of horror releases", tickFormat: "%", grid: true},
+  marks: [
+    Plot.barY(monthShares, {x: "name", y: "share", fill: d => d.month === 10 ? "#e11d48" : "#5b4f50", tip: true}),
+    Plot.ruleY([1 / 12], {stroke: "#f5c451", strokeDasharray: "4,4"})
+  ]
+})
+```
+
+::: {.labnote}
+[Lab Note]{.lab-label}
+
+**Excitation transfer theory** (Dolf Zillmann) suggests that the physical arousal from fear, like a racing heart, can carry over and make the relief afterward feel even better. Halloween gives that experience a social setting: people watch together, scream together, and laugh afterward. Fear that is shared and expected feels safer, which may be part of why studios have leaned harder into October every decade.
+:::
+
+[Data: TidyTuesday horror movies dataset, from The Movie Database (TMDB). Ratings use films with at least 20 votes. These are patterns in the data, not proof of cause, and the research notes offer possible explanations.]{.source-note}
