@@ -1,0 +1,75 @@
+---
+title: "Find Your Movie"
+subtitle: "Choose a genre and a range of years. Hover over any dot to see the movie."
+---
+
+::: {.reel}
+The Screening Room
+:::
+
+```{r}
+source("prep.R")
+ojs_define(movies = movies |>
+  select(movie, year, genre, mpaa_rating, production_budget, worldwide_gross, return_ratio))
+```
+
+```{ojs}
+viewof pickedGenres = Inputs.checkbox(
+  ["Horror", "Comedy", "Action", "Adventure", "Drama"],
+  {label: "Genres", value: ["Horror", "Comedy"]}
+)
+viewof startYear = Inputs.range([1970, 2019], {label: "From year", step: 1, value: 1990})
+viewof search = Inputs.text({label: "Search a title", placeholder: "Try Scream or Bridesmaids"})
+```
+
+```{ojs}
+data = transpose(movies)
+  .filter(d => pickedGenres.includes(d.genre))
+  .filter(d => d.year >= startYear)
+  .filter(d => d.movie.toLowerCase().includes(search.toLowerCase()))
+```
+
+```{ojs}
+Plot.plot({
+  width: 800,
+  height: 520,
+  marginLeft: 70,
+  marginBottom: 50,
+  style: {background: "transparent", color: "#f1f1f1", fontSize: "13px"},
+  x: {type: "log", label: "Production budget →", labelAnchor: "center", labelOffset: 42, ticks: 5, tickFormat: "$~s"},
+  y: {type: "log", label: "↑ Worldwide box office", ticks: 6, tickFormat: "$~s"},
+  color: {
+    domain: ["Horror", "Comedy", "Action", "Adventure", "Drama"],
+    range: ["#e11d48", "#f5c451", "#7dd3fc", "#c4b5fd", "#8a7d78"],
+    legend: true
+  },
+  marks: [
+    Plot.line([[1e5, 1e5], [5e8, 5e8]], {stroke: "#9ca3af", strokeDasharray: "4,4"}),
+    Plot.dot(data, {
+      x: "production_budget", y: "worldwide_gross", fill: "genre",
+      r: 4, fillOpacity: 0.7, tip: true,
+      channels: {Movie: "movie", Year: "year", Rating: "mpaa_rating"}
+    })
+  ]
+})
+```
+
+Dots above the dashed line earned back more than they cost. Showing **${data.length}** movies.
+
+```{ojs}
+Inputs.table(
+  data.slice().sort((a, b) => b.return_ratio - a.return_ratio),
+  {
+    columns: ["movie", "year", "genre", "production_budget", "worldwide_gross", "return_ratio"],
+    header: {movie: "Movie", year: "Year", genre: "Genre", production_budget: "Budget",
+             worldwide_gross: "Worldwide gross", return_ratio: "Times budget"},
+    format: {
+      year: d => d,
+      production_budget: d => "$" + d3.format(",")(d),
+      worldwide_gross: d => "$" + d3.format(",")(d),
+      return_ratio: d => d.toFixed(1) + "x"
+    },
+    rows: 12
+  }
+)
+```

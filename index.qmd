@@ -1,0 +1,74 @@
+---
+pagetitle: "Fear & Laughter"
+---
+
+::: {.marquee}
+[Now Showing  ✦  A Double Feature in Data]{.kicker}
+
+[Fear [&]{.amp} Laughter]{.headline}
+
+[Why Americans pay to be scared, and why they pay to laugh]{.tagline}
+
+[Starring 3,364 Hollywood movies  ✦  1936 to 2018]{.credits}
+
+[Presented by Zheyre Tolliver]{.credits}
+:::
+
+::: {.tickets}
+::: {.ticket .horror}
+[Admit One  ✦  The Thrill]{.admit}
+
+[2.7x]{.big}
+
+[The typical horror movie earns back almost three times its budget, the best of any genre.]{.what}
+:::
+
+::: {.ticket .comedy}
+[Admit One  ✦  The Relief]{.admit}
+
+[1.9x]{.big}
+
+[The typical comedy nearly doubles its money, and studios release one almost every week of the year.]{.what}
+:::
+:::
+
+```{r}
+source("prep.R")
+
+genre_summary <- movies |>
+  group_by(genre) |>
+  summarise(median_return = median(return_ratio), n = n()) |>
+  arrange(median_return)
+
+movies |>
+  mutate(genre = factor(genre, levels = genre_summary$genre)) |>
+  ggplot(aes(x = return_ratio, y = genre, color = genre)) +
+  geom_jitter(height = 0.25, alpha = 0.35, size = 1.4) +
+  geom_point(data = genre_summary |> mutate(genre = factor(genre, levels = genre_summary$genre)),
+             aes(x = median_return), color = "white", size = 5, shape = 21,
+             fill = "black", stroke = 1.5) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "#9ca3af") +
+  annotate("text", x = 1.05, y = 0.55, label = "breaks even", hjust = 0,
+           color = "#9ca3af", size = 3.5) +
+  scale_x_log10(labels = c("0.01x", "0.1x", "1x", "10x", "100x"),
+                breaks = c(0.01, 0.1, 1, 10, 100)) +
+  scale_color_manual(values = genre_colors) +
+  labs(
+    title = "Horror earns the most back for every dollar spent",
+    subtitle = "Each dot is one movie. Circles mark each genre's typical (median) movie.",
+    x = "Worldwide box office divided by budget (log scale)",
+    y = NULL,
+    caption = "Data: The Numbers, via TidyTuesday (3,364 movies, 1936 to 2018)"
+  ) +
+  theme_fear()
+```
+
+People do not need to be scared or to laugh, yet they buy tickets for both. Psychologists describe horror as a way to feel fear safely: the heart races, the danger is not real, and the relief afterward feels good. Comedy works in the opposite direction, releasing tension and helping people cope with stress.
+
+This site looks at those two genres through what audiences actually did with their money. Out of about 3,300 movies, the typical horror film earned about 2.7 times its budget, the most of any genre, while the typical comedy earned about 1.9 times its budget. Choose your next showing:
+
+::: {.tickets}
+<a class="ticket comedy" href="explore.html"><span class="admit">Screening Room  ✦  Explore</span><br><span class="big">Find Your Movie</span><br><span class="what">Search every film, filter by genre and year, and see which ones paid off.</span></a>
+
+<a class="ticket horror" href="october.html"><span class="admit">Feature Story  ✦  Read</span><br><span class="big">Why October Belongs to Horror</span><br><span class="what">The month Americans go looking for fear, and what that says about us.</span></a>
+:::
