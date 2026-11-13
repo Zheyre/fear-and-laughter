@@ -35,7 +35,7 @@ body { font-size: 1.08rem; line-height: 1.75; }
   border-image: linear-gradient(90deg, #7f1d1d, #e11d48, #f5c451, #e11d48, #7f1d1d) 1;
 }
 .navbar-brand .navbar-title { font-family: "Bebas Neue", sans-serif; font-size: 1.7rem; letter-spacing: 0.08em; color: #f5c451; }
-.navbar .nav-link { font-family: "Bebas Neue", sans-serif; font-size: 1.2rem; letter-spacing: 0.1em; }
+.navbar .nav-link { font-family: "Bebas Neue", sans-serif; font-size: 1.2rem; letter-spacing: 0.06em; white-space: nowrap; }
 
 h1.title, .title { font-weight: 800; }
 .quarto-title .subtitle { font-family: "Playfair Display", serif; font-style: italic; color: #cbbd9f; }
@@ -115,3 +115,24 @@ table { color: #efe6d2; }
 thead th { font-family: "Bebas Neue", sans-serif; letter-spacing: 0.04em; font-size: 1rem; color: #f5c451 !important; }
 
 .nav-footer { font-family: "Bebas Neue", sans-serif; letter-spacing: 0.2em; color: #8a7d68; }
+
+// ===== Psychology page =====
+h2 { font-family: "Playfair Display", serif; margin-top: 3rem; padding-bottom: 0.4rem; border-bottom: 1px solid #3a2326; }
+.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0 0.5rem; }
+.stat { border-radius: 12px; padding: 0.9rem 1.2rem; background: #160f10; border: 1px solid #3a2326; }
+.stat.pure { border-top: 4px solid #e11d48; }
+.stat.mix { border-top: 4px solid #f5c451; }
+.stat .label { font-family: "Bebas Neue", sans-serif; letter-spacing: 0.15em; color: #cbbd9f; display: block; }
+.stat .num { font-family: "Bebas Neue", sans-serif; font-size: 3.4rem; line-height: 1; display: block; }
+.stat.pure .num { color: #e11d48; }
+.stat.mix .num { color: #f5c451; }
+.stat .small { font-size: 0.85rem; color: #9c8f78; }
+.labnote {
+  position: relative; margin: 1.6rem 0 1rem; padding: 1.1rem 1.3rem 1rem; border-radius: 12px;
+  background: linear-gradient(135deg, rgba(245, 196, 81, 0.07), rgba(225, 29, 72, 0.06));
+  border: 1px dashed rgba(245, 196, 81, 0.45); font-size: 0.98rem;
+}
+.labnote p:last-child { margin-bottom: 0; }
+.lab-label { font-family: "Bebas Neue", sans-serif; letter-spacing: 0.3em; color: #f5c451; display: block; margin-bottom: 0.3rem; }
+.source-note { display: block; margin-top: 2.5rem; font-size: 0.82rem; color: #8a7d68; font-style: italic; }
+@media (max-width: 600px) { .stat-row { grid-template-columns: 1fr; } }

@@ -28,7 +28,7 @@ pagetitle: "Fear & Laughter"
 
 [1.9x]{.big}
 
-[The typical comedy nearly doubles its money, and studios release one almost every week of the year.]{.what}
+[The typical comedy nearly doubles its money, and comedies come out steadily all year long.]{.what}
 :::
 :::
 
@@ -71,4 +71,6 @@ This site looks at those two genres through what audiences actually did with the
 <a class="ticket comedy" href="explore.html"><span class="admit">Screening Room  ✦  Explore</span><br><span class="big">Find Your Movie</span><br><span class="what">Search every film, filter by genre and year, and see which ones paid off.</span></a>
 
 <a class="ticket horror" href="october.html"><span class="admit">Feature Story  ✦  Read</span><br><span class="big">Why October Belongs to Horror</span><br><span class="what">The month Americans go looking for fear, and what that says about us.</span></a>
+
+<a class="ticket horror" href="psychology.html"><span class="admit">The Laboratory  ✦  Interactive</span><br><span class="big">The Psychology of a Good Scare</span><br><span class="what">Mix fear with laughter, watch monsters change over time, and test the Halloween effect.</span></a>
 :::

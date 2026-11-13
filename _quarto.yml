@@ -12,7 +12,9 @@ website:
       - href: explore.qmd
         text: Find Your Movie
       - href: october.qmd
-        text: Why October Belongs to Horror
+        text: The October Story
+      - href: psychology.qmd
+        text: The Psychology of Fear
 
 format:
   html:
