@@ -1,0 +1,89 @@
+---
+title: "Small Budgets, Big Screams"
+subtitle: "Why horror is the safest bet in Hollywood"
+---
+
+::: {.reel}
+Feature Story
+:::
+
+::: {.stat-row}
+::: {.stat .pure}
+[Horror movies that earned 10x their budget]{.label}
+
+[1 in 5]{.num}
+
+[about 21% of 295 horror films]{.small}
+:::
+
+::: {.stat .mix}
+[Comedies that earned 10x their budget]{.label}
+
+[1 in 18]{.num}
+
+[about 6% of 807 comedies]{.small}
+:::
+:::
+
+```{r}
+source("prep.R")
+
+tiers <- movies |>
+  filter(genre %in% c("Horror", "Comedy")) |>
+  mutate(tier = cut(production_budget,
+                    breaks = c(0, 5e6, 20e6, 50e6, Inf),
+                    labels = c("Under $5M", "$5M to $20M", "$20M to $50M", "Over $50M"),
+                    right = FALSE)) |>
+  group_by(genre, tier) |>
+  summarise(median_return = median(return_ratio), films = n(), .groups = "drop")
+
+ggplot(tiers, aes(x = tier, y = median_return, fill = genre)) +
+  geom_col(position = position_dodge(width = 0.75), width = 0.7) +
+  geom_text(aes(label = paste0(round(median_return, 1), "x")),
+            position = position_dodge(width = 0.75), vjust = -0.5, size = 4) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "#9ca3af") +
+  scale_fill_manual(values = genre_colors) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
+  labs(
+    title = "Horror out-earns comedy at every budget level",
+    subtitle = "Typical (median) worldwide box office divided by budget. The dashed line is breaking even.",
+    x = "Production budget",
+    y = "Times budget earned back",
+    fill = NULL,
+    caption = "Data: The Numbers, via TidyTuesday (807 comedies, 295 horror movies)"
+  ) +
+  theme_fear() +
+  theme(legend.position = "top")
+```
+
+::: {.dropcap}
+Horror is cheap to make. The typical horror movie in this data cost about \$11 million, while the typical comedy cost about \$18 million. Yet horror earns back more at every budget level, and the gap is widest for the smallest films. A horror movie made for under \$5 million typically earned about 3.5 times its budget.
+:::
+
+::: {.pullquote}
+One in five horror movies earned back ten times what it cost.
+:::
+
+The biggest success stories are almost all tiny productions. The top five horror movies by return were each made for about a million dollars or less:
+
+```{r}
+movies |>
+  filter(genre == "Horror") |>
+  slice_max(return_ratio, n = 5) |>
+  transmute(
+    Movie = movie,
+    Year = year,
+    Budget = dollar(production_budget),
+    `Worldwide gross` = dollar(worldwide_gross),
+    `Times budget` = paste0(round(return_ratio), "x")
+  ) |>
+  knitr::kable()
+```
+
+::: {.labnote}
+[Lab Note]{.lab-label}
+
+Why can fear be made so cheaply? Horror works mostly through **anticipation**: a dark hallway, a sound off screen, a door left open. The audience's own imagination fills in the threat, which costs nothing to film. *Paranormal Activity* and *The Blair Witch Project* barely show their monsters at all, and that is a big part of why they feel so frightening. Comedy, on the other hand, usually depends on well known stars and many scenes, which raises the price.
+:::
+
+[Explore every movie yourself on the [Find Your Movie](explore.html) page.]{.source-note}

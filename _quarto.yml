@@ -4,7 +4,7 @@ project:
 website:
   title: "Fear & Laughter"
   page-footer:
-    center: "Data: The Numbers via TidyTuesday  ✦  A data story by Zheyre Tolliver"
+    center: "Data: The Numbers and TMDB via TidyTuesday  ✦  A data story by Zheyre Tolliver"
   navbar:
     left:
       - href: index.qmd
@@ -13,8 +13,12 @@ website:
         text: Find Your Movie
       - href: october.qmd
         text: The October Story
+      - href: budget.qmd
+        text: Small Budgets
       - href: psychology.qmd
         text: The Psychology of Fear
+      - href: about.qmd
+        text: About
 
 format:
   html:

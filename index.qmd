@@ -72,5 +72,7 @@ This site looks at those two genres through what audiences actually did with the
 
 <a class="ticket horror" href="october.html"><span class="admit">Feature Story  ✦  Read</span><br><span class="big">Why October Belongs to Horror</span><br><span class="what">The month Americans go looking for fear, and what that says about us.</span></a>
 
+<a class="ticket comedy" href="budget.html"><span class="admit">Feature Story  ✦  Read</span><br><span class="big">Small Budgets, Big Screams</span><br><span class="what">Why horror is the safest bet in Hollywood, and how a $450,000 movie earned $194 million.</span></a>
+
 <a class="ticket horror" href="psychology.html"><span class="admit">The Laboratory  ✦  Interactive</span><br><span class="big">The Psychology of a Good Scare</span><br><span class="what">Mix fear with laughter, watch monsters change over time, and test the Halloween effect.</span></a>
 :::

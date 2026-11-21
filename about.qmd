@@ -1,0 +1,20 @@
+---
+title: "About"
+---
+
+::: {.reel}
+The Credits
+:::
+
+## About me
+
+My name is **Zheyre Tolliver**. I am a student at [New College of Florida](https://www.ncf.edu), majoring in Psychology and Creative Writing. I built this site for ISC2076 because I wanted to understand why people pay to feel afraid and why they pay to laugh.
+
+- **Email:** [zheyret@gmail.com](mailto:zheyret@gmail.com)
+- **GitHub:** [github.com/Zheyre](https://github.com/Zheyre)
+- **Project repo:** [github.com/Zheyre/fear-and-laughter](https://github.com/Zheyre/fear-and-laughter)
+- **School:** [New College of Florida](https://www.ncf.edu)
+
+## About the data
+
+This site uses two datasets shared through [TidyTuesday](https://github.com/rfordatascience/tidytuesday), a weekly data project from the R community. The [movie profit data](https://github.com/rfordatascience/tidytuesday/tree/main/data/2018/2018-10-23) comes from [The Numbers](https://www.the-numbers.com) and lists the budget and box office earnings of 3,364 Hollywood movies released from 1936 to 2018, which I narrowed to five genres. The [horror movie data](https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-11-01) comes from [The Movie Database (TMDB)](https://www.themoviedb.org) and describes about 32,000 horror movies, including their plot summaries, release dates, and audience ratings.
