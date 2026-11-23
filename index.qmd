@@ -32,36 +32,6 @@ pagetitle: "Fear & Laughter"
 :::
 :::
 
-```{r}
-source("prep.R")
-
-genre_summary <- movies |>
-  group_by(genre) |>
-  summarise(median_return = median(return_ratio), n = n()) |>
-  arrange(median_return)
-
-movies |>
-  mutate(genre = factor(genre, levels = genre_summary$genre)) |>
-  ggplot(aes(x = return_ratio, y = genre, color = genre)) +
-  geom_jitter(height = 0.25, alpha = 0.35, size = 1.4) +
-  geom_point(data = genre_summary |> mutate(genre = factor(genre, levels = genre_summary$genre)),
-             aes(x = median_return), color = "white", size = 5, shape = 21,
-             fill = "black", stroke = 1.5) +
-  geom_vline(xintercept = 1, linetype = "dashed", color = "#9ca3af") +
-  annotate("text", x = 1.05, y = 0.55, label = "breaks even", hjust = 0,
-           color = "#9ca3af", size = 3.5) +
-  scale_x_log10(labels = c("0.01x", "0.1x", "1x", "10x", "100x"),
-                breaks = c(0.01, 0.1, 1, 10, 100)) +
-  scale_color_manual(values = genre_colors) +
-  labs(
-    title = "Horror earns the most back for every dollar spent",
-    subtitle = "Each dot is one movie. Circles mark each genre's typical (median) movie.",
-    x = "Worldwide box office divided by budget (log scale)",
-    y = NULL,
-    caption = "Data: The Numbers, via TidyTuesday (3,364 movies, 1936 to 2018)"
-  ) +
-  theme_fear()
-```
 
 People do not need to be scared or to laugh, yet they buy tickets for both. Psychologists describe horror as a way to feel fear safely: the heart races, the danger is not real, and the relief afterward feels good. Comedy works in the opposite direction, releasing tension and helping people cope with stress.
 
